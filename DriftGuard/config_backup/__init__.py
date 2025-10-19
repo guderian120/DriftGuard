@@ -1,0 +1,1 @@
+# DriftGuard Django Configuration

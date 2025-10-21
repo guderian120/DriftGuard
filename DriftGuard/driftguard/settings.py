@@ -50,10 +50,6 @@ INSTALLED_APPS = [
     'apps.drifts',
     'apps.ml',
     'apps.recommendations',
-    'apps.correlations',
-    'apps.notifications',
-    'apps.analytics',
-    'apps.dashboard',
 ]
 
 MIDDLEWARE = [
@@ -102,6 +98,11 @@ DATABASES = {
 
 # Custom user model
 AUTH_USER_MODEL = 'core.User'
+
+# Authentication backends for custom user model
+AUTHENTICATION_BACKENDS = [
+    'django.contrib.auth.backends.ModelBackend',
+]
 
 # Password validation
 AUTH_PASSWORD_VALIDATORS = [
@@ -238,10 +239,13 @@ LOGGING = {
 # Email Configuration
 EMAIL_BACKEND = os.environ.get('EMAIL_BACKEND', 'django.core.mail.backends.console.EmailBackend')
 
+# URL Configuration
+APPEND_SLASH = True  # Ensure trailing slashes for API consistency
+
 # Security Settings
 SECURE_SSL_REDIRECT = os.environ.get('SECURE_SSL_REDIRECT', 'False').lower() == 'true'
 SESSION_COOKIE_SECURE = os.environ.get('SESSION_COOKIE_SECURE', 'False').lower() == 'true'
 CSRF_COOKIE_SECURE = os.environ.get('CSRF_COOKIE_SECURE', 'False').lower() == 'true'
 SECURE_BROWSER_XSS_FILTER = True
-SECURE_CONTENT_TYPE_NOSNIFF = True
+SECURE_CONTENT_TYPE_NOSNILF = True
 X_FRAME_OPTIONS = 'DENY'

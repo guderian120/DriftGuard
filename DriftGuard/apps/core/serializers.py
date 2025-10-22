@@ -5,27 +5,33 @@ from rest_framework_simplejwt.tokens import RefreshToken
 from .models import User
 
 
+# def authenticate_user(email_or_username, password):
+#     """
+#     Custom authentication that supports login with either email or username
+#     """
+#     # First try to authenticate as username
+#     user = authenticate(username=email_or_username, password=password)
+   
+#     if user:
+#         print("auth one done", user)
+#         return user
+
+#     # If that fails, try to find user by email and authenticate
+#     try:
+#         custom_user = User.objects.get(email=email_or_username)
+#         print("auth one failed, looking at two")
+#         # Try to authenticate with the actual username found by email
+#         user = authenticate(username=custom_user.username, password=password)
+#         if user:
+#             return user
+#     except Exception as e:
+#         print("exceptions: ",e)
+        
+
+#     return None
+
 def authenticate_user(email_or_username, password):
-    """
-    Custom authentication that supports login with either email or username
-    """
-    # First try to authenticate as username
-    user = authenticate(username=email_or_username, password=password)
-    if user:
-        return user
-
-    # If that fails, try to find user by email and authenticate
-    try:
-        custom_user = User.objects.get(email=email_or_username)
-        # Try to authenticate with the actual username found by email
-        user = authenticate(username=custom_user.username, password=password)
-        if user:
-            return user
-    except User.DoesNotExist:
-        pass
-
-    return None
-
+    return authenticate(username=email_or_username, password=password)
 
 class LoginSerializer(serializers.Serializer):
     """Serializer for user login (supports both username and email)"""
@@ -33,6 +39,7 @@ class LoginSerializer(serializers.Serializer):
     password = serializers.CharField(required=True, write_only=True)
 
     def validate(self, attrs):
+        print("validating now")
         email_or_username = attrs.get('email_or_username')
         password = attrs.get('password')
 

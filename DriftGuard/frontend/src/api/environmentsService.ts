@@ -17,7 +17,12 @@ export const environmentsService = {
     return response.data;
   },
 
-  createEnvironment: async (environmentData: Omit<Environment, 'id' | 'created_at' | 'updated_at' | 'resource_count' | 'drift_count' | 'organization_name' | 'cloud_provider_display'>): Promise<Environment> => {
+  createEnvironment: async (environmentData: {
+    name: string;
+    cloud_provider: string;
+    region: string;
+    account_id: string;
+  }): Promise<Environment> => {
     const response = await api.post('/environments/', environmentData);
     return response.data;
   },
@@ -29,5 +34,16 @@ export const environmentsService = {
 
   deleteEnvironment: async (id: number): Promise<void> => {
     await api.delete(`/environments/${id}/`);
+  },
+
+  setEnvironmentCredentials: async (id: number, credentialsData: {
+    credential_type: string;
+    name: string;
+    aws_access_key_id?: string;
+    aws_secret_access_key?: string;
+    aws_role_arn?: string;
+  }) => {
+    const response = await api.post(`/environments/${id}/credentials/`, credentialsData);
+    return response.data;
   }
 };

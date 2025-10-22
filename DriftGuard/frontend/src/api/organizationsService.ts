@@ -9,6 +9,8 @@ export interface Organization {
   is_active: boolean;
   created_at: string;
   updated_at: string;
+  users_count?: number;
+  environments_count?: number;
 }
 
 export interface OrganizationSettings {
@@ -23,6 +25,32 @@ export interface OrganizationSettings {
   session_timeout: number;
   gemini_ai_enabled: boolean;
   ml_retraining_enabled: boolean;
+}
+
+export interface OrganizationMember {
+  id: number;
+  username: string;
+  email: string;
+  first_name: string;
+  last_name: string;
+  full_name: string;
+  role: 'admin' | 'editor' | 'viewer';
+  is_active: boolean;
+  organization_name: string;
+  last_login?: string;
+  date_joined: string;
+}
+
+export interface MemberInviteRequest {
+  email: string;
+  role: 'admin' | 'editor' | 'viewer';
+  first_name?: string;
+  last_name?: string;
+}
+
+export interface MemberInviteResponse extends OrganizationMember {
+  _temp_password?: string;
+  note?: string;
 }
 
 export const organizationsService = {
@@ -66,5 +94,25 @@ export const organizationsService = {
   updateOrganizationSettings: async (id: number, settings: Partial<OrganizationSettings>): Promise<OrganizationSettings> => {
     const response = await api.put(`/organizations/${id}/settings/`, settings);
     return response.data;
+  },
+
+  // Member management endpoints
+  getOrganizationMembers: async (id: number): Promise<OrganizationMember[]> => {
+    const response = await api.get(`/organizations/${id}/members/`);
+    return response.data;
+  },
+
+  inviteMember: async (id: number, inviteData: MemberInviteRequest): Promise<MemberInviteResponse> => {
+    const response = await api.post(`/organizations/${id}/invite_member/`, inviteData);
+    return response.data;
+  },
+
+  updateMember: async (id: number, userId: number, memberData: Partial<Pick<OrganizationMember, 'role' | 'is_active'>>): Promise<OrganizationMember> => {
+    const response = await api.put(`/organizations/${id}/members/${userId}/`, memberData);
+    return response.data;
+  },
+
+  removeMember: async (id: number, userId: number): Promise<void> => {
+    await api.delete(`/organizations/${id}/members/${userId}/`);
   }
 };

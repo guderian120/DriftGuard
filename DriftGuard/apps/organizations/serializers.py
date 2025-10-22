@@ -1,6 +1,9 @@
 from rest_framework import serializers
+from django.contrib.auth import get_user_model
 
 from .models import Organization, OrganizationSettings
+
+User = get_user_model()
 
 
 class OrganizationSerializer(serializers.ModelSerializer):
@@ -59,6 +62,63 @@ class OrganizationSettingsSerializer(serializers.ModelSerializer):
             'created_at', 'updated_at'
         ]
         read_only_fields = ['organization', 'organization_name', 'created_at', 'updated_at']
+
+
+class OrganizationMemberSerializer(serializers.ModelSerializer):
+    """Serializer for organization members (users)"""
+
+    organization_name = serializers.CharField(source='organization.name', read_only=True)
+    full_name = serializers.SerializerMethodField()
+    is_active_display = serializers.CharField(source='is_active', read_only=True)
+
+    class Meta:
+        model = User
+        fields = [
+            'id', 'username', 'email', 'first_name', 'last_name', 'full_name',
+            'role', 'is_active', 'is_active_display', 'organization_name',
+            'last_login', 'date_joined'
+        ]
+        read_only_fields = [
+            'id', 'username', 'email', 'first_name', 'last_name', 'full_name',
+            'is_active_display', 'organization_name', 'last_login', 'date_joined'
+        ]
+
+    def get_full_name(self, obj):
+        """Return user's full name"""
+        full_name = obj.get_full_name()
+        return full_name if full_name else obj.username
+
+
+class OrganizationMemberUpdateSerializer(serializers.ModelSerializer):
+    """Serializer for updating organization member roles/status"""
+
+    class Meta:
+        model = User
+        fields = ['role', 'is_active']
+        read_only_fields = []
+
+    def validate_role(self, value):
+        """Ensure valid role values"""
+        valid_roles = [choice[0] for choice in User._meta.get_field('role').choices]
+        if value not in valid_roles:
+            raise serializers.ValidationError(f"Invalid role. Valid choices are: {valid_roles}")
+        return value
+
+
+class OrganizationMemberInviteSerializer(serializers.Serializer):
+    """Serializer for inviting new members to organization"""
+
+    email = serializers.EmailField()
+    role = serializers.ChoiceField(choices=User._meta.get_field('role').choices, default='viewer')
+    first_name = serializers.CharField(max_length=150, required=False)
+    last_name = serializers.CharField(max_length=150, required=False)
+
+    def validate_email(self, value):
+        """Ensure email is not already in use in this organization"""
+        organization = self.context.get('organization')
+        if organization and User.objects.filter(email=value, organization=organization).exists():
+            raise serializers.ValidationError("A user with this email already exists in this organization.")
+        return value
 
 
 class OrganizationRegistrationSerializer(serializers.ModelSerializer):

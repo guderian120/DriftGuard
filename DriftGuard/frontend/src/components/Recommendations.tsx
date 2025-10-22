@@ -217,7 +217,7 @@ const Recommendations: React.FC = () => {
                       Implementation Steps
                     </Typography>
                     <List dense>
-                      {rec.implementation_steps.map((step, index) => (
+                      {rec.implementation_steps.map((step: string, index: number) => (
                         <ListItem key={index}>
                           <ListItemText
                             primary={`${index + 1}. ${step}`}
@@ -251,7 +251,7 @@ const Recommendations: React.FC = () => {
                           Tags
                         </Typography>
                         <Box sx={{ display: 'flex', gap: 0.5, flexWrap: 'wrap' }}>
-                          {rec.tags.map((tag, index) => (
+                          {rec.tags.map((tag: string, index: number) => (
                             <Chip
                               key={index}
                               label={tag}

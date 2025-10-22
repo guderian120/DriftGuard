@@ -1,7 +1,7 @@
 from django.db import models
 from django.core.validators import MaxValueValidator, MinValueValidator
 from apps.environments.models import Environment
-from apps.iac.models import IACResource
+from apps.iac.models import IaCResource
 
 
 class DriftEvent(models.Model):
@@ -27,7 +27,7 @@ class DriftEvent(models.Model):
         related_name='drifts'
     )
     iac_resource = models.ForeignKey(
-        IACResource,
+        IaCResource,
         on_delete=models.CASCADE,
         related_name='drift'
     )

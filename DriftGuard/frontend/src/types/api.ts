@@ -13,6 +13,37 @@ export interface Environment {
   is_ready_for_scan: boolean;
   resource_count: number;
   drift_count: number;
+  has_credentials: boolean;
+  created_at: string;
+  updated_at: string;
+}
+
+export interface IaCRepository {
+  id: number;
+  name: string;
+  platform: 'github' | 'gitlab' | 'bitbucket';
+  repository_url: string;
+  repository_owner: string;
+  repository_name: string;
+  branch: string;
+  iac_type: string;
+  github_token?: string;
+  organization: number;
+  created_by: number;
+  created_at: string;
+  updated_at: string;
+  is_active: boolean;
+}
+
+export interface IaCFile {
+  id: number;
+  repository: number;
+  file_path: string;
+  file_name: string;
+  file_type: string;
+  content_hash: string;
+  last_modified: string;
+  last_scanned: string;
   created_at: string;
   updated_at: string;
 }

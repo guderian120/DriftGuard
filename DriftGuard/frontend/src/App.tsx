@@ -10,6 +10,7 @@ import Register from './components/auth/Register';
 import Layout from './components/Layout';
 import Dashboard from './components/Dashboard';
 import Environments from './components/Environments';
+import Iac from './components/Iac';
 import Drifts from './components/Drifts';
 import Recommendations from './components/Recommendations';
 import PrivateRoute from './components/PrivateRoute';
@@ -53,6 +54,16 @@ function App() {
             <PrivateRoute>
               <Layout>
                 <Environments />
+              </Layout>
+            </PrivateRoute>
+          }
+        />
+        <Route
+          path="/iac"
+          element={
+            <PrivateRoute>
+              <Layout>
+                <Iac />
               </Layout>
             </PrivateRoute>
           }

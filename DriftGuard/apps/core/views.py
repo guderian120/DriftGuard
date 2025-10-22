@@ -67,7 +67,8 @@ class LoginView(APIView):
 
     def post(self, request):
         from .serializers import LoginSerializer
-
+        print("logging in now")
+        print(request.data)
         serializer = LoginSerializer(data=request.data)
         if serializer.is_valid():
             return Response(serializer.save(), status=status.HTTP_200_OK)
